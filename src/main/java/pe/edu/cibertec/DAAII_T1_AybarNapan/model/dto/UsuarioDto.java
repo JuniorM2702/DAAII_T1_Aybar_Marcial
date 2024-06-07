@@ -8,7 +8,6 @@ public class UsuarioDto {
     private String nomusuario;
     private String nombres;
     private String apellidos;
-    private String password;
     private Boolean activo;
     private String email;
 }

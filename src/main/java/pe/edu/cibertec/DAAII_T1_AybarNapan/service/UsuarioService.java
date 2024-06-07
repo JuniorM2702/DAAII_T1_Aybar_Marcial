@@ -19,7 +19,6 @@ public class UsuarioService implements IUsuarioService {
 
     private UsuarioRepository usuarioRepository;
     private RolRepository rolRepository;
-    private RandomPassword randomPassword;
 
     @Override
     public Usuario buscarUsuarioXNomUsuario(String nomusuario) {
@@ -31,17 +30,30 @@ public class UsuarioService implements IUsuarioService {
         usuario.setActivo(true);
         Rol usuarioRol = rolRepository.findByNomrol("ADMIN");
         usuario.setRoles(new HashSet<>(Arrays.asList(usuarioRol)));
-        usuario.setPassword(passwordEncoder.encode(randomPassword.generar(7)));
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         return usuarioRepository.save(usuario);
     }
 
-    @Override
-    public void actualizarUsuario(Usuario usuario) {
-        usuarioRepository.actualizarUsuario(
-                usuario.getNombres(),usuario.getApellidos(),
-                usuario.getActivo(),usuario.getIdusuario()
-        );
+    public void CambiarPassword(String username, String newPassword) {
+        Usuario usuario = usuarioRepository.findByNomusuario(username);
+        if (usuario != null) {
+            if (!validarPassword(newPassword)) {
+                throw new IllegalArgumentException("La contraseña no cumple con los requisitos.");
+            }
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String passwordCifrada = passwordEncoder.encode(newPassword);
+            usuario.setPassword(passwordCifrada);
+            usuarioRepository.save(usuario);
+        } else {
+            throw new IllegalArgumentException("Usuario no encontrado: " + username);
+        }
     }
+
+    private boolean validarPassword(String password) {
+        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+        return password.matches(regex);
+    }
+
     @Override
     public List<Usuario> listarUsuario() {
         return usuarioRepository.findAll();

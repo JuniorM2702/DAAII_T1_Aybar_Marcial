@@ -28,15 +28,14 @@
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" th:href="@{/seguridad/usuario}">Usuarios</a></li>
                         <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" th:href="@{/auth/cambiar-password}">Cambiar Password</a></li>
+                        <li><hr class="dropdown-divider"></li>
                         <li>
                             <form th:action="@{/logout}" method="post" class="d-flex" role="search">
                                 <button class="dropdown-item" type="submit">Cerrar Sesión</button>
                             </form>
                         </li>
                     </ul>
-                </li>
-                <li>
-                    Bienvenido <span th:text="${username}"></span>
                 </li>
             </ul>
         </div>
